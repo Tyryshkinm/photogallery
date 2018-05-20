@@ -55,6 +55,20 @@ return [
             'visibility' => 'public',
         ],
 
+        'photos/sources' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/photos/sources'),
+            'url' => env('APP_URL').'/storage/sources',
+            'visibility' => 'public',
+        ],
+
+        'photos/thumbnails' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/photos/thumbnails'),
+            'url' => env('APP_URL').'/storage/thumbnails',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

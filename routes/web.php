@@ -11,7 +11,10 @@
 |
 */
 
-Route::get('/', 'HomeController@index')->name('home');
+// Homepage route
+Route::get('/', function () {
+    return redirect()->route('categories.index');
+});
 
 //Adminer route
 Route::any('adminer', '\Miroc\LaravelAdminer\AdminerController@index');
@@ -21,7 +24,11 @@ Route::get('login', ['as' => 'login', 'uses' => 'Auth\LoginController@showLoginF
 Route::post('login', ['as' => 'login.post', 'uses' => 'Auth\LoginController@login']);
 Route::post('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
-// Category routes
-Route::group(['middleware' => 'admin'], function () {
-    Route::get('categories', 'CategoryController@index');
-});
+// Category route
+Route::resource('categories', 'CategoryController');
+
+// Subcategory route
+Route::resource('categories.subcategories', 'SubcategoryController');
+
+// Photo route
+Route::resource('categories.subcategories.photos', 'PhotoController');

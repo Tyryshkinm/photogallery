@@ -1,0 +1,55 @@
+.panel-heading {
+    display: flex;
+    align-items: center;
+}
+
+.entity-add {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/*Category*/
+
+.category {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    color: #636b6f;
+
+}
+
+.category:first-child {
+    border-top: none;
+    margin-top: -15px;
+}
+
+.category:last-child {
+    margin-bottom: -15px;
+}
+
+.category:hover {
+    background-color: #f5f5f5;
+    text-decoration: none;
+}
+
+.category-btn {
+    display: flex;
+    justify-content: center;
+}
+
+/*Subcategory*/
+
+/*Photo*/
+.photo {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.control-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
