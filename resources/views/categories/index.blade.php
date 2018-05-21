@@ -7,11 +7,13 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <div>Categories</div>
-                        <div class="entity-add">
-                            <a href="{{ route('categories.create') }}">
-                                <button class="btn btn-success">Add Category</button>
-                            </a>
-                        </div>
+                        @if(Auth::check())
+                            <div class="entity-add">
+                                <a href="{{ route('categories.create') }}">
+                                    <button class="btn btn-success">Add Category</button>
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="panel-body" style="padding: 0 15px">

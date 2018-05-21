@@ -13,11 +13,13 @@
                             </a>&nbsp;>&nbsp;
                             <div>{{ $subcategory->name }}</div>
                         </div>
-                        <div class="entity-add">
-                            <a href="{{ route('categories.subcategories.photos.create', [$subcategory->category_id, $subcategory->id]) }}">
-                                <button class="btn btn-success">Add Photo</button>
-                            </a>
-                        </div>
+                        @if(Auth::check())
+                            <div class="entity-add">
+                                <a href="{{ route('categories.subcategories.photos.create', [$subcategory->category_id, $subcategory->id]) }}">
+                                    <button class="btn btn-success">Add Photo</button>
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="panel-body" style="margin-bottom: -38px">

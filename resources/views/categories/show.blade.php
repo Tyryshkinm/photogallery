@@ -10,11 +10,13 @@
                             <a href="/">Categories</a>&nbsp;>&nbsp;
                             <div>{{ $category->name }}</div>
                         </div>
-                        <div class="entity-add">
-                            <a href="{{ route('categories.subcategories.create', $category->id) }}">
-                                <button class="btn btn-success">Add Subategory</button>
-                            </a>
-                        </div>
+                        @if(Auth::check())
+                            <div class="entity-add">
+                                <a href="{{ route('categories.subcategories.create', $category->id) }}">
+                                    <button class="btn btn-success">Add Subategory</button>
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="panel-body" style="padding: 0 15px">
