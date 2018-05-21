@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\Subcategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Input;
 
 class SubcategoryController extends Controller
 {
@@ -48,7 +47,7 @@ class SubcategoryController extends Controller
      * @param  int  $subcategoryId
      * @return \Illuminate\Http\Response
      */
-    public function show($categoryId, $subcategoryId)
+    public function show($categoryId = null, $subcategoryId)
     {
         $subcategory = Subcategory::FindOrFail($subcategoryId);
         return view('subcategories.show')->with('subcategory', $subcategory);
@@ -63,7 +62,7 @@ class SubcategoryController extends Controller
      */
     public function edit($categoryId, $subcategoryId)
     {
-        $categories = Category::all();
+        $categories = Category::select()->where('id', '!=', $categoryId)->get();
         $subcategory = Subcategory::findOrFail($subcategoryId);
         return view ('subcategories.edit')
             ->with(['categories' => $categories,
@@ -81,12 +80,11 @@ class SubcategoryController extends Controller
     public function update(Request $request, $categoryId, $subcategoryId)
     {
         $category = $request->input('category');
-        $cat_id = Category::select('id')->where('name', '=', $category)->first();
         $subcategory = Subcategory::findOrFail($subcategoryId);
         $subcategory->name = $request->input('name');
-        $subcategory->category_id = $cat_id->id;
+        $subcategory->category_id = Category::select('id')->where('name', '=', $category)->first()->id;
         $subcategory->save();
-        return redirect('/categories/' . $categoryId);
+        return redirect()->route('categories.show', $categoryId);
     }
 
     /**
@@ -96,10 +94,10 @@ class SubcategoryController extends Controller
      * @param  int  $subcategoryId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($categoryId, $subcategoryId)
+    public function destroy($categoryId = null, $subcategoryId)
     {
         $subcategory = Subcategory::findOrFail($subcategoryId);
         $subcategory->delete();
-        return redirect()->route('categories.show', $categoryId);
+        return redirect()->route('categories.show', $subcategory->category_id);
     }
 }

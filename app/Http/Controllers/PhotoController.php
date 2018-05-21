@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Photo;
 use Illuminate\Http\Request;
-use Intervention\Image\Facades\Image;
 
 class PhotoController extends Controller
 {
@@ -35,27 +34,9 @@ class PhotoController extends Controller
      */
     public function store(Request $request, $categoryId, $subcategoryId)
     {
-        $path = 'categories/' . $categoryId . '/subcategories/' . $subcategoryId;
-        $request->file('photo')->store($path, 'photos/sources');
-        $request->file('photo')->store($path, 'photos/thumbnails');
-        $photoName = $request->file('photo')->hashName();
-        $thumbnail = Image::make(storage_path('app/public/photos/thumbnails/') . $path . '/' . $photoName);
-
-        if ($thumbnail->width() > $thumbnail->height()) {
-            $thumbnail->resize(800, null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-        } elseif ($thumbnail->width() < $thumbnail->height()) {
-            $thumbnail->resize(null, 800, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-        } else {
-            $thumbnail->resize(800, 800);
-        }
-
-        $thumbnail->save(base_path('storage/app/public/photos/thumbnails/' . $path . '/' . $photoName));
-
         $photo = new Photo();
+        $path = 'categories/' . $categoryId . '/subcategories/' . $subcategoryId;
+        $photo->createThumbnail($request, $path);
         $photo->path = $path . '/' . $request->file('photo')->hashName();
         $photo->description = $request->input('description');
         $photo->subcategory_id = $subcategoryId;
@@ -78,36 +59,56 @@ class PhotoController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified photo.
      *
-     * @param  int  $id
+     * @param  int  $categoryId
+     * @param  int  $subcategoryId
+     * @param  int  $photoId
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($categoryId, $subcategoryId = null, $photoId)
     {
-        //
+        $photo = Photo::findOrFail($photoId);
+        return view('photos.edit')
+            ->with(['photo' => $photo,
+                    'categoryId' => $categoryId]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified photo in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  int  $categoryId
+     * @param  int  $subcategoryId
+     * @param  int  $photoId
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $categoryId, $subcategoryId, $photoId)
     {
-        //
+        $photo = Photo::findOrFail($photoId);
+        $photo->deletePhotoFromStorage($photo->path);
+        $path = 'categories/' . $categoryId . '/subcategories/' . $subcategoryId;
+        $photo->createThumbnail($request, $path);
+        $photo->path = $path . '/' . $request->file('photo')->hashName();
+        $photo->description = $request->input('description');
+        $photo->subcategory_id = $subcategoryId;
+        $photo->save();
+        return redirect()->route('categories.subcategories.show', [$categoryId, $subcategoryId]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified photo from storage.
      *
-     * @param  int  $id
+     * @param  int  $categoryId
+     * @param  int  $subcategoryId
+     * @param  int  $photoId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($categoryId, $subcategoryId, $photoId)
     {
-        //
+        $photo = Photo::findOrFail($photoId);
+        $photo->deletePhotoFromStorage($photo->path);
+        $photo->delete();
+        return redirect()->route('categories.subcategories.show', [$categoryId, $subcategoryId]);
     }
 }
